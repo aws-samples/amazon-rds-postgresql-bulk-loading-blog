@@ -1,0 +1,35 @@
+{
+    "DBParameterGroupName": "rds-postgresql-13-bulkload",
+    "Parameters": [
+		{
+			"ParameterName": "maintenance_work_mem",
+			"ParameterValue": "1048576",
+			"ApplyMethod": "pending-reboot"
+		},
+		{
+			"ParameterName": "max_wal_size",
+			"ParameterValue": "4096",
+			"ApplyMethod": "pending-reboot"
+		},
+		{
+			"ParameterName": "checkpoint_timeout",
+			"ParameterValue": "1800",
+			"ApplyMethod": "pending-reboot"
+		},
+		{
+			"ParameterName": "synchronous_commit",
+			"ParameterValue": "off",
+			"ApplyMethod": "pending-reboot"
+		},
+		{
+			"ParameterName": "pglogical.synchronous_commit",
+			"ParameterValue": "0",
+			"ApplyMethod": "pending-reboot"
+		},
+		{
+			"ParameterName": "autovacuum",
+			"ParameterValue": "0",
+			"ApplyMethod": "pending-reboot"
+		}
+	]
+}
