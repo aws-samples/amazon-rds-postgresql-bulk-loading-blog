@@ -25,7 +25,7 @@ First create a database parameter group and set parameters that are optimized fo
 
 ```
 aws rds create-db-parameter-group \
-   --db-parameter-group-name [DB_PARAMETER_GROUP_NAME] \
+   --db-parameter-group-name rds-postgres14-bulkload \
    --db-parameter-group-family postgres13 \
    --description "Optimized database parameters for bulk loading into Amazon RDS for PostgreSQL"
 ```
@@ -50,21 +50,6 @@ Create json file `rds-postgresql13-bulkload.json` with optimized parameters.
 			"ParameterName": "checkpoint_timeout",
 			"ParameterValue": "1800",
 			"ApplyMethod": "pending-reboot"
-		},
-		{
-			"ParameterName": "synchronous_commit",
-			"ParameterValue": "off",
-			"ApplyMethod": "pending-reboot"
-		},
-		{
-			"ParameterName": "pglogical.synchronous_commit",
-			"ParameterValue": "0",
-			"ApplyMethod": "pending-reboot"
-		},
-		{
-			"ParameterName": "autovacuum",
-			"ParameterValue": "0",
-			"ApplyMethod": "pending-reboot"
 		}
 	]
 }
@@ -74,48 +59,25 @@ Modify the json file with parameter values to the optimized database parameter g
 
 ```
 aws rds modify-db-parameter-group \
-   --db-parameter-group-name [DB_PARAMETER_GROUP_NAME] \
-   --cli-input-json file://rds-postgresql13-bulkload.json
+   --db-parameter-group-name rds-postgres14-bulkload \
+   --cli-input-json file://rds-postgresql14-bulkload.json
 ```
 
 ### 2. Apply optimized configurations prior to bulk loading
-
-**CAUTION**: Only consider disabling MAZ and/or database backups if the operational risk profile of the database (as determined by the business) allows. Temporarily disabling MAZ and/or database backups increases performance of bulk loading, but incurs operational risks.
-
-Disable MAZ
-```
-aws rds modify-db-instance --region [REGION] --db-instance-identifier [DB_INSTANCE_IDENTIFIER] --no-multi-az --apply-immediately
-```
-
-Disable backups
-```
-aws rds modify-db-instance --db-instance-identifier [DB_INSTANCE_IDENTIFIER] --backup-retention-period 0 --apply-immediately
-```
 
 Apply database parameter group optimized for bulk loading
 ```
 aws rds modify-db-instance \
    --db-instance-identifier [DB_INSTANCE_IDENTIFIER] \
-   --db-parameter-group [DB_PARAMETER_GROUP_NAME]
+   --db-parameter-group rds-postgres14-bulkload
 ```
 ### 3. Return to normal configuration after bulk loading completes
-
-Enable MAZ
-```
-aws rds modify-db-instance --region [REGION] --db-instance-identifier [DB_INSTANCE_IDENTIFIER] --multi-az --apply-immediately
-```
-
-Enable backups
-```
-aws rds modify-db-instance --db-instance-identifier [DB_INSTANCE_IDENTIFIER] --backup-retention-period [BACKUP_RETENTION_DAYS] --apply-immediately
-
-```
 
 Apply normal database parameter group
 ```
 aws rds modify-db-instance \
    --db-instance-identifier [DB_INSTANCE_IDENTIFIER] \
-   --db-parameter-group default.postgres13
+   --db-parameter-group default.postgres14
 ```
 
 ## Performing bulk loading
