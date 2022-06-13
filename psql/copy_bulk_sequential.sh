@@ -11,3 +11,4 @@ psql -h $host -p 5432 -d $db -U postgres -c "\i ./sql/ratings.sql"
 psql -h $host -p 5432 -d $db -U postgres -c "\i ./sql/name_basics.sql"
 
 wait
+
