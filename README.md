@@ -26,30 +26,30 @@ First create a database parameter group and set parameters that are optimized fo
 ```
 aws rds create-db-parameter-group \
    --db-parameter-group-name rds-postgres14-bulkload \
-   --db-parameter-group-family postgres13 \
+   --db-parameter-group-family postgres14 \
    --description "Optimized database parameters for bulk loading into Amazon RDS for PostgreSQL"
 ```
 
-Create json file `rds-postgresql13-bulkload.json` with optimized parameters.
+Create json file `rds-postgresql14-bulkload.json` with optimized parameters.
 
 ```
 {
-    "DBParameterGroupName": "rds-postgresql-13-bulkload",
+    "DBParameterGroupName": "rds-postgresql14-bulkload",
     "Parameters": [
 		{
 			"ParameterName": "maintenance_work_mem",
 			"ParameterValue": "1048576",
-			"ApplyMethod": "pending-reboot"
+			"ApplyMethod": "immediate"
 		},
 		{
 			"ParameterName": "max_wal_size",
 			"ParameterValue": "4096",
-			"ApplyMethod": "pending-reboot"
+			"ApplyMethod": "immediate"
 		},
 		{
 			"ParameterName": "checkpoint_timeout",
 			"ParameterValue": "1800",
-			"ApplyMethod": "pending-reboot"
+			"ApplyMethod": "immediate"
 		}
 	]
 }
@@ -82,22 +82,29 @@ aws rds modify-db-instance \
 
 ## Performing bulk loading
 
-The bash scripts provided execute psql commands against the Amazon RDS for PostgreSQL database. The script named `copy_bulk_sequential.sh` executes each psql command after the previous one finishes. The script named `copy_bulk_parallel.sh` executes all commands in parallel without waiting for the previous commands to complete.
+The bash scripts provided execute psql commands against the Amazon RDS for PostgreSQL database. The script named `copy_bulk_sequential.sh` executes each psql command after the previous one finishes. The script named `copy_bulk_parallel.sh` executes all commands in parallel without waiting for the previous commands to complete. There are also a "pre" and "post" bulk loading scripts. The `pre_bulkloading.sh` script disables autovacuum at the table level. The `post_bulkloading.sh` script executes a checkpoint command, runs vacuum analyze on each of the target tables, then reenables autovacuum on each table.
 
 Make scripts executable
 ```
+cd psql
+chmod +x pre_bulkloading.sh
+chmod +x post_bulkloading.sh
 chmod +x copy_bulk_sequential.sh
 chmod +x copy_bulk_parallel.sh
 ```
 
-Executing bulk load sequentially
+Executing bulk load sequentially and report loading time
 ```
-./copy_bulk_sequential.sh
+./pre_bulkloading.sh
+time ./copy_bulk_sequential.sh
+./post_bulkloading.sh
 ```
 
-Executing bulk load in parallel
+Executing bulk load in parallel and report loading time
 ```
-./copy_bulk_parallel.sh
+./pre_bulkloading.sh
+time ./copy_bulk_parallel.sh
+./post_bulkloading.sh
 ```
 
 ## Security
@@ -107,4 +114,3 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 ## License
 
 This library is licensed under the MIT-0 License. See the LICENSE file.
-
