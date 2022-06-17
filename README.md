@@ -1,6 +1,6 @@
 # Optimized bulk loading in Amazon RDS for PostgreSQL
 
-The artifacts in this repository support the published blog: Optimized bulk loading in Amazon RDS for PostgreSQL. Refer to the blog for detailed instructions on setup and configuration for benchmarking.
+The artifacts in this repository support the published blog: [Optimized bulk loading in Amazon RDS for PostgreSQL](https://aws.amazon.com/blogs/database/optimized-bulk-loading-in-amazon-rds-for-postgresql/). Refer to the blog for detailed instructions on setup and configuration for benchmarking.
 
 ## Setting up your testbench
 
