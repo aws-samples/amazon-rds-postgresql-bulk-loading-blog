@@ -9,13 +9,13 @@ IMDB staging tables
 */
 create table staging.title (
 	titleId text null,
-	ordering int null,
+	ordering text null,
 	title text null,
 	region text null,
 	language text null,
 	types text null,
-	attributes text[] null,
-	isOriginalTitle bit null
+	attributes text null,
+	isOriginalTitle text null
 );
 
 create table staging.title_basics (
@@ -23,7 +23,7 @@ create table staging.title_basics (
 	titleType text null,
 	primaryTitle text null,
 	originalTitle text null,
-	isAdult bit null,
+	isAdult text null,
 	startYear text null,
 	endYear text null,
 	runtimeMinutes text null,
@@ -32,8 +32,8 @@ create table staging.title_basics (
 
 create table staging.title_crew (
 	tconst text null,
-	directors text[] null,
-	writers text[] null
+	directors text null,
+	writers text null
 );
 
 create table staging.title_episode(
@@ -64,5 +64,5 @@ create table staging.name_basics (
 	birthYear text null,
 	deathYear text null,
 	primaryProfession text null,
-	knownForTitles text[] null
+	knownForTitles text null
 );
